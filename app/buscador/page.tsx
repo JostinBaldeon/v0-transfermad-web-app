@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { PlayerSearch } from "@/components/player-search"
 
 export const metadata: Metadata = {
@@ -22,7 +23,9 @@ export default function BuscadorPage() {
         </div>
 
         {/* Search component */}
-        <PlayerSearch />
+        <Suspense fallback={<div className="text-muted-foreground">Cargando buscador...</div>}>
+          <PlayerSearch />
+        </Suspense>
       </div>
     </div>
   )
