@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Calendar, Tag } from "lucide-react"
-import { news, formatDate, getCategoryName } from "@/lib/data/news"
+import { getNews, formatDate, getCategoryName } from "@/lib/data/news"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata: Metadata = {
@@ -9,11 +9,9 @@ export const metadata: Metadata = {
   description: "Todas las noticias de la Mad League. Fichajes, premios, actualizaciones y más.",
 }
 
-export default function NoticiasPage() {
-  // Sort news by date (newest first)
-  const sortedNews = [...news].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  )
+export default async function NoticiasPage() {
+  // Fetch news from Supabase (already sorted by date)
+  const sortedNews = await getNews()
 
   return (
     <div className="min-h-screen py-12">
