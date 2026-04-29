@@ -52,7 +52,7 @@ export function AppHeader() {
             </div>
             
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/torneopesof"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 text-muted-foreground hover:text-foreground transition-colors"
