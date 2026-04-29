@@ -145,7 +145,7 @@ Una temporada para el recuerdo que estableció nuevos récords en la historia de
   {
     id: "4",
     slug: "actualizacion-1-2",
-    title: "Actualización 1.2: Hall de la Fama y más",
+    title: "Actualización 1.2: Hall de la Fama y Haaland",
     excerpt: "Nueva sección de Hall de la Fama y múltiples mejoras en la experiencia de usuario.",
     content: `
 La **Actualización 1.2** ha llegado con una de las características más solicitadas por la comunidad: el Hall de la Fama.
