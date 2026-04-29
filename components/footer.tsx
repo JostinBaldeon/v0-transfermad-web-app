@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Instagram, Twitter, Youtube } from "lucide-react"
+import { Instagram, Music2, Youtube } from "lucide-react"
 
 const quickLinks = [
   { label: "Noticias", href: "/noticias" },
