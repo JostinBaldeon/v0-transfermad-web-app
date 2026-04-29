@@ -78,6 +78,15 @@ export default async function NoticiasPage() {
                     index === 0 ? "h-64 md:h-80" : "h-48"
                   }`}
                 >
+                  {article.image ? (
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : null}
+                  <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
                       <Tag className="h-8 w-8 text-primary/60" />

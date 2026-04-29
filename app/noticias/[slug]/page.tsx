@@ -115,6 +115,14 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
 
           {/* Hero image placeholder */}
           <div className="relative h-64 md:h-96 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 mb-8 overflow-hidden">
+            {article.image ? (
+              <img
+                src={article.image}
+                alt={article.title}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : null}
+            <div className="absolute inset-0 bg-black/25" />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center">
                 <Tag className="h-12 w-12 text-primary/60" />
