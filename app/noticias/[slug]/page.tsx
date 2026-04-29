@@ -1,21 +1,77 @@
-export const dynamic = "force-dynamic"
-
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight, Calendar, User, Tag } from "lucide-react"
-import { getNewsArticleBySlug, getRelatedNews, formatDate, getCategoryName } from "@/lib/data/news"
+import { formatDate, getCategoryName } from "@/lib/data/news"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+
+export const revalidate = 3600 // Revalidate every hour
+
+interface NewsArticle {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  image: string
+  category: "premios" | "actualizacion" | "temporada" | "records" | "fichajes"
+  published_at: string
+  author: string
+  related_news?: string[]
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+async function getArticle(slug: string): Promise<NewsArticle | null> {
+  try {
+    const { supabase } = await import("@/lib/supabase/client")
+    const { data, error } = await supabase
+      .from("news")
+      .select("*")
+      .eq("slug", slug)
+      .single()
+
+    if (error) {
+      console.error("[v0] Supabase error:", error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error("[v0] Error fetching article:", error)
+    return null
+  }
+}
+
+async function getRelatedArticles(relatedSlugs: string[]): Promise<NewsArticle[]> {
+  if (!relatedSlugs || relatedSlugs.length === 0) return []
+
+  try {
+    const { supabase } = await import("@/lib/supabase/client")
+    const { data, error } = await supabase
+      .from("news")
+      .select("*")
+      .in("slug", relatedSlugs)
+
+    if (error) {
+      console.error("[v0] Error fetching related:", error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error("[v0] Error fetching related articles:", error)
+    return []
+  }
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const article = getNewsArticleBySlug(slug)
-  
+  const article = await getArticle(slug)
+
   if (!article) {
     return { title: "Noticia no encontrada | TransferMad" }
   }
@@ -27,7 +83,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: article.title,
       description: article.excerpt,
       type: "article",
-      publishedTime: article.publishedAt,
+      publishedTime: article.published_at,
       authors: [article.author],
     },
   }
@@ -35,13 +91,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function NoticiaDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const article = getNewsArticleBySlug(slug)
+  const article = await getArticle(slug)
 
   if (!article) {
     notFound()
   }
 
-  const relatedArticles = getRelatedNews(article.id)
+  const relatedArticles = article.related_news
+    ? await getRelatedArticles(article.related_news)
+    : []
 
   return (
     <div className="min-h-screen py-12">
@@ -77,8 +135,8 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
             <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                <time dateTime={article.publishedAt}>
-                  {formatDate(article.publishedAt)}
+                <time dateTime={article.published_at}>
+                  {formatDate(article.published_at)}
                 </time>
               </div>
               <div className="flex items-center gap-2">

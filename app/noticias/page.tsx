@@ -1,7 +1,9 @@
+export const revalidate = 3600 // Revalidate every hour
+
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Calendar, Tag } from "lucide-react"
-import { news, formatDate, getCategoryName } from "@/lib/data/news"
+import { formatDate, getCategoryName } from "@/lib/data/news"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata: Metadata = {
@@ -9,11 +11,43 @@ export const metadata: Metadata = {
   description: "Todas las noticias de la Mad League. Fichajes, premios, actualizaciones y más.",
 }
 
-export default function NoticiasPage() {
-  // Sort news by date (newest first)
-  const sortedNews = [...news].sort(
-    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-  )
+interface NewsArticle {
+  id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  image: string
+  category: "premios" | "actualizacion" | "temporada" | "records" | "fichajes"
+  published_at: string
+  author: string
+}
+
+async function getNews(): Promise<NewsArticle[]> {
+  try {
+    // Use server-side fetch from Supabase directly
+    const { supabase } = await import("@/lib/supabase/client")
+    const { data, error } = await supabase
+      .from("news")
+      .select("*")
+      .order("published_at", { ascending: false })
+
+    if (error) {
+      console.error("[v0] Supabase error:", error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error("[v0] Failed to fetch news:", error)
+    return []
+  }
+}
+
+export default async function NoticiasPage() {
+  const articles = await getNews()
+
+  const sortedNews = articles
 
   return (
     <div className="min-h-screen py-12">
@@ -61,8 +95,8 @@ export default function NoticiasPage() {
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                     <Calendar className="h-4 w-4" />
-                    <time dateTime={article.publishedAt}>
-                      {formatDate(article.publishedAt)}
+                    <time dateTime={article.published_at}>
+                      {formatDate(article.published_at)}
                     </time>
                   </div>
 
