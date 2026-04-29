@@ -1,19 +1,15 @@
+export const dynamic = "force-dynamic"
+
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight, Calendar, User, Tag } from "lucide-react"
-import { news, getNewsArticleBySlug, getRelatedNews, formatDate, getCategoryName } from "@/lib/data/news"
+import { getNewsArticleBySlug, getRelatedNews, formatDate, getCategoryName } from "@/lib/data/news"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
 interface PageProps {
   params: Promise<{ slug: string }>
-}
-
-export async function generateStaticParams() {
-  return news.map((article) => ({
-    slug: article.slug,
-  }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
