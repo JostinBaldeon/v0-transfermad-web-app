@@ -24,6 +24,41 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+
+## Local environment variables
+
+This project requires Supabase public environment variables in local development.
+
+1. Create your local env file:
+
+```bash
+cp .env.local.example .env.local
+```
+
+2. Fill `.env.local` with values from one of these sources:
+   - **Vercel (recommended)**: Project Settings → Environment Variables
+   - **Supabase**: Project Settings → API (`Project URL` and `anon public` key)
+
+Required variables:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-public-key>
+```
+
+3. Restart the dev server after editing env vars:
+
+```bash
+npm run dev
+```
+
+Optional (if this repo is linked to Vercel), you can pull all env vars automatically:
+
+```bash
+vercel link
+vercel env pull .env.local
+```
+
 ## Learn More
 
 To learn more, take a look at the following resources:
