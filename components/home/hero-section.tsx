@@ -44,7 +44,7 @@ export function HeroSection() {
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed">
             El portal oficial de la Mad League. Más de{" "}
-            <span className="text-foreground font-semibold">60 futbolistas</span>,{" "}
+            <span className="text-foreground font-semibold">534 futbolistas</span>,{" "}
             <span className="text-foreground font-semibold">20 equipos</span> y{" "}
             <span className="text-foreground font-semibold">2 ligas</span> te esperan.
             Descubre el mercado más emocionante del fútbol virtual.
@@ -69,7 +69,7 @@ export function HeroSection() {
           <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-xl mx-auto">
             <div className="flex flex-col items-center p-4 rounded-lg bg-card/50 border border-border">
               <Users className="h-6 w-6 text-primary mb-2" />
-              <span className="text-2xl md:text-3xl font-bold text-foreground">60+</span>
+              <span className="text-2xl md:text-3xl font-bold text-foreground">534+</span>
               <span className="text-xs md:text-sm text-muted-foreground">Jugadores</span>
             </div>
             <div className="flex flex-col items-center p-4 rounded-lg bg-card/50 border border-border">
