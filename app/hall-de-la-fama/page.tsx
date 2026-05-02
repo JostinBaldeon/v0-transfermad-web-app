@@ -4,7 +4,8 @@ import { HallOfFameCard } from "@/components/hall-of-fame-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getHallOfFameByRole } from "@/lib/data/hall-of-fame"
 
-export const revalidate = 3600 // Revalidate every hour
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: "Hall de la Fama | TransferMad",
