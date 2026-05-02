@@ -19,6 +19,17 @@ BEGIN
     image = NEW.image,
     club = c.name,
     club_id = c.id,
+    stats = (
+      SELECT jsonb_agg(
+        CASE
+          WHEN elem->>'label' = 'Goles' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(NEW.goals, 'FM999G999G999')))
+          WHEN elem->>'label' = 'Asistencias' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(NEW.assists, 'FM999G999G999')))
+          WHEN elem->>'label' = 'Partidos' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(NEW.matches, 'FM999G999G999')))
+          ELSE elem
+        END
+      )
+      FROM jsonb_array_elements(COALESCE(hof.stats, '[]'::jsonb)) AS elem
+    ),
     updated_at = NOW()
   FROM clubs c
   WHERE hof.player_id = NEW.id
@@ -30,7 +41,7 @@ $$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS trg_sync_hof_from_player ON players;
 CREATE TRIGGER trg_sync_hof_from_player
-AFTER UPDATE OF name, image, club_id ON players
+AFTER UPDATE OF name, image, club_id, goals, assists, matches ON players
 FOR EACH ROW
 EXECUTE FUNCTION sync_hall_of_fame_from_player();
 
@@ -47,3 +58,22 @@ JOIN clubs c ON c.id = p.club_id
 WHERE hof.role = 'jugador'
   AND lower(hof.name) = lower(p.name)
   AND hof.player_id IS NULL;
+
+
+-- Backfill for historical rows: update stats values from players for linked HOF players.
+UPDATE hall_of_fame hof
+SET
+  stats = (
+    SELECT jsonb_agg(
+      CASE
+        WHEN elem->>'label' = 'Goles' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(p.goals, 'FM999G999G999')))
+        WHEN elem->>'label' = 'Asistencias' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(p.assists, 'FM999G999G999')))
+        WHEN elem->>'label' = 'Partidos' THEN jsonb_set(elem, '{value}', to_jsonb(to_char(p.matches, 'FM999G999G999')))
+        ELSE elem
+      END
+    )
+    FROM jsonb_array_elements(COALESCE(hof.stats, '[]'::jsonb)) AS elem
+  ),
+  updated_at = NOW()
+FROM players p
+WHERE hof.player_id = p.id;
