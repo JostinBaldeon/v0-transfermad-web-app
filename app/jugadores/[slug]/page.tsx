@@ -7,6 +7,9 @@ import { getClubById } from "@/lib/data/clubs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 interface SupabasePlayer {
   id: string
   name: string
@@ -37,6 +40,27 @@ async function getPlayerFromSupabase(slug: string) {
     return data as SupabasePlayer | null
   } catch (error) {
     console.error("[v0] Failed to fetch player:", error)
+    return null
+  }
+}
+
+async function getClubFromSupabase(clubId: string) {
+  try {
+    const { supabase } = await import("@/lib/supabase/client")
+    const { data, error } = await supabase
+      .from("clubs")
+      .select("id,name,primary_color")
+      .eq("id", clubId)
+      .maybeSingle()
+
+    if (error) {
+      console.error("[v0] Supabase error fetching club:", error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error("[v0] Failed to fetch club:", error)
     return null
   }
 }
@@ -101,7 +125,14 @@ export default async function PlayerDetailPage({ params }: PageProps) {
     notFound()
   }
 
-  const club = getClubById(player.clubId)
+  const supabaseClub = await getClubFromSupabase(player.clubId)
+  const club = supabaseClub
+    ? {
+        id: supabaseClub.id,
+        name: supabaseClub.name,
+        primaryColor: supabaseClub.primary_color,
+      }
+    : getClubById(player.clubId)
 
   return (
     <div className="min-h-screen py-12">
