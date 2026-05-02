@@ -7,6 +7,40 @@ import { getClubById } from "@/lib/data/clubs"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
+interface SupabasePlayer {
+  id: string
+  name: string
+  position: string
+  club_id: string
+  age: number
+  nationality: string
+  nationality_flag: string
+  height: number
+  foot: string
+  market_value: number
+  goals: number
+  assists: number
+  matches: number
+  is_legend?: boolean
+  market_history?: { season: string; value: number }[]
+  club_history?: { season: string; clubId: string }[]
+}
+
+async function getPlayerFromSupabase(slug: string) {
+  try {
+    const { supabase } = await import("@/lib/supabase/client")
+    const { data, error } = await supabase.from("players").select("*").eq("id", slug).maybeSingle()
+    if (error) {
+      console.error("[v0] Supabase error fetching player:", error)
+      return null
+    }
+    return data as SupabasePlayer | null
+  } catch (error) {
+    console.error("[v0] Failed to fetch player:", error)
+    return null
+  }
+}
+
 interface PageProps {
   params: Promise<{ slug: string }>
 }
@@ -19,21 +53,49 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const player = getPlayerById(slug)
-  
+  const supabasePlayer = await getPlayerFromSupabase(slug)
+  const player = supabasePlayer
+    ? {
+        id: supabasePlayer.id,
+        name: supabasePlayer.name,
+        position: supabasePlayer.position as any,
+        marketValue: supabasePlayer.market_value,
+      }
+    : getPlayerById(slug)
+
   if (!player) {
     return { title: "Jugador no encontrado | TransferMad" }
   }
 
   return {
     title: `${player.name} | TransferMad`,
-    description: `Perfil de ${player.name}. ${getPositionName(player.position)} - Valor: ${formatMarketValue(player.marketValue)}`,
+    description: `Perfil de ${player.name}. ${getPositionName(player.position as any)} - Valor: ${formatMarketValue(player.marketValue)}`,
   }
 }
 
 export default async function PlayerDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const player = getPlayerById(slug)
+  const supabasePlayer = await getPlayerFromSupabase(slug)
+  const player = supabasePlayer
+    ? {
+        id: supabasePlayer.id,
+        name: supabasePlayer.name,
+        position: supabasePlayer.position as any,
+        clubId: supabasePlayer.club_id,
+        age: supabasePlayer.age,
+        nationality: supabasePlayer.nationality,
+        nationalityFlag: supabasePlayer.nationality_flag,
+        height: supabasePlayer.height,
+        foot: supabasePlayer.foot as any,
+        marketValue: supabasePlayer.market_value,
+        goals: supabasePlayer.goals,
+        assists: supabasePlayer.assists,
+        matches: supabasePlayer.matches,
+        isLegend: supabasePlayer.is_legend || false,
+        marketHistory: supabasePlayer.market_history || [],
+        clubHistory: supabasePlayer.club_history || [],
+      }
+    : getPlayerById(slug)
 
   if (!player) {
     notFound()
