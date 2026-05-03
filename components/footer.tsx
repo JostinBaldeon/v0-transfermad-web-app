@@ -44,7 +44,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://tiktok.com"
+                href="https://www.tiktok.com/@madleague4"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-md bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
