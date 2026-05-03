@@ -35,7 +35,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-3">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/torneopesof"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-md bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
