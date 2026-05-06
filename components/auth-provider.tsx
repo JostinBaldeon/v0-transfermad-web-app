@@ -7,7 +7,7 @@ type Role = "user" | "admin"
 
 type AppUser = {
   id: string
-  user: string
+  username: string
   email: string
   role: Role
   coins: number
@@ -25,7 +25,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 const LOCAL_ADMIN = {
   id: "local-admin-1",
-  user: "admin1",
+  username: "admin1",
   email: "admin1@madleague.com",
   password: "123456",
   role: "admin" as const,
@@ -53,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (normalized === LOCAL_ADMIN.email && password === LOCAL_ADMIN.password) {
       const adminUser: AppUser = {
         id: LOCAL_ADMIN.id,
-        user: LOCAL_ADMIN.user,
+        username: LOCAL_ADMIN.username,
         email: LOCAL_ADMIN.email,
         role: LOCAL_ADMIN.role,
         coins: LOCAL_ADMIN.coins,
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data, error } = await supabase
       .from("users")
-      .select("id, user, email, password, role, coins, createdAt")
+      .select("id, username, email, password, role, coins, createdAt")
       .eq("email", normalized)
       .eq("password", password)
       .maybeSingle()
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const appUser: AppUser = {
       id: data.id,
-      user: data.user,
+      username: data.username,
       email: data.email,
       role: data.role,
       coins: data.coins,

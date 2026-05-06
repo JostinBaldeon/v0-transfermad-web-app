@@ -1,6 +1,6 @@
 create table if not exists public.users (
   id uuid primary key default gen_random_uuid(),
-  user text not null,
+  username text not null,
   email text not null unique,
   password text not null,
   role text not null check (role in ('user', 'admin')),
