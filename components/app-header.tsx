@@ -59,7 +59,7 @@ export function AppHeader() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>¡Hola, {user.user}!</DropdownMenuLabel>
+                  <DropdownMenuLabel>¡Hola, {user.username}!</DropdownMenuLabel>
                   {user.role === "admin" && (
                     <DropdownMenuItem asChild>
                       <Link href="/admin">Panel admin</Link>
@@ -94,7 +94,7 @@ export function AppHeader() {
                     ))}
                   </nav>
                   <div className="border-t border-border pt-4">
-                    {user ? <p className="text-sm px-1">¡Hola, {user.user}! ({user.coins} monedas)</p> : <Button variant="outline" className="w-full" asChild><Link href="/login">Iniciar sesión</Link></Button>}
+                    {user ? <p className="text-sm px-1">¡Hola, {user.username}! ({user.coins} monedas)</p> : <Button variant="outline" className="w-full" asChild><Link href="/login">Iniciar sesión</Link></Button>}
                   </div>
                 </div>
               </SheetContent>
